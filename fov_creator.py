@@ -1,15 +1,16 @@
 import cv2
 import json
 import constants
-import os
 import sys
 import container
 import pprint
+import os
 
 
 def crop(video_path, trace_list, width, height, output_path):
     print(video_path)
     filename = video_path.split('.')
+    extension = filename[1]
     videocap = cv2.VideoCapture(video_path)
     success, image = videocap.read()
     fps = videocap.get(cv2.CAP_PROP_FPS)
@@ -26,19 +27,37 @@ def crop(video_path, trace_list, width, height, output_path):
             crop_img = image[trace.y:trace.y + height, trace.x:trace.x + width]
             output.write(crop_img)
     output.release()
+    command = "/home/aras/bin/ffmpeg -i " + output_path + " -c:a copy -c:v libx264 -crf 18 -preset veryfast " + output_path + ".mp4"
+    print(command)
+    os.system(command)
+    os.system("mv " + output_path + ".mp4 " + output_path)
+
+
+def re_encode_dir(dest_path):
+    for subdir in os.listdir(dest_path):
+        subdir = os.path.join(dest_path, subdir)
+        for filename in os.listdir(subdir):
+            filename = os.path.join(subdir, filename)
+            if filename.endswith(".mp4"):
+                command = "/home/aras/bin/ffmpeg -i " + filename + " -c:a copy -c:v libx264 -crf 18 -preset veryfast -y " + filename
+                print(command)
+                os.system(command)
 
 
 # Usage:
 #  python3 <full-size-video-dir> <filename of full size video> <predict file> <json detection file> <width> <height>
 if __name__ == '__main__':
     storage_path = sys.argv[1]
-    video_filename = sys.argv[2]
-    pred_filename = sys.argv[3]
-    object_det_filename = sys.argv[4]
-    fov_width = int(sys.argv[5])
-    fov_height = int(sys.argv[6])
+    dest_path = sys.argv[2]
+    video_filename = sys.argv[3]
+    pred_filename = sys.argv[4]
+    object_det_filename = sys.argv[5]
+    fov_width = int(sys.argv[6])
+    fov_height = int(sys.argv[7])
     frame_list = []
     pp = pprint.PrettyPrinter(indent=4)
+
+
 
     with open(pred_filename) as f:
         obj_list = []
@@ -67,7 +86,7 @@ if __name__ == '__main__':
             fov_filename = os.path.join(storage_path, video_filename + '_' + str(segment_index) + '.mp4')
             # crop and save video segments from an original segment
             for j in cluster:
-                output_dir = os.path.join(os.path.join(storage_path, str(segment_index)))
+                output_dir = os.path.join(os.path.join(dest_path, str(segment_index)))
                 if not os.path.exists(output_dir):
                     os.makedirs(output_dir)
                 output_path = os.path.join(output_dir, str(j) + '.mp4')
@@ -77,3 +96,4 @@ if __name__ == '__main__':
                 print('process index', segment_index, 'path_id', j)
                 crop(fov_filename, trace_list, fov_width, fov_height, output_path)
             segment_index = segment_index + 1
+

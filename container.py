@@ -14,13 +14,15 @@ class Trace:
         self.x = int(self.x + ((self.width - w) / 2))
         self.y = int(self.y + ((self.height - h) / 2))
 
-        # workarounds
+        # Fix out of border issue with a brute-force way
         if self.x < 0:
             self.x = constants.FOUR_K_WIDTH + self.x
             if self.x > constants.FOUR_K_WIDTH - w:
                 self.x = constants.FOUR_K_WIDTH - w
         if self.x + w > constants.FOUR_K_WIDTH:
             self.x = constants.FOUR_K_WIDTH - w
+        if self.y < 0:
+            self.y = 0
         if self.y + h > constants.FOUR_K_HEIGHT:
             self.y = constants.FOUR_K_HEIGHT - h
 
