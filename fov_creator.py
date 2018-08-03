@@ -57,8 +57,6 @@ if __name__ == '__main__':
     frame_list = []
     pp = pprint.PrettyPrinter(indent=4)
 
-
-
     with open(pred_filename) as f:
         obj_list = []
         for line in f:

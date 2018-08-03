@@ -7,7 +7,7 @@ import os
 
 parser = ArgumentParser('Create segments for the input video')
 parser.add_argument('video', help='video filename')
-parser.add_argument('total', type=int, help='integer for total frame of the video')
+parser.add_argument('total', type=int, help='integer for total duration of the video')
 parser.add_argument('output', help='output path')
 parser.add_argument('name', help='filename')
 
