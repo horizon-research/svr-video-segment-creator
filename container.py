@@ -19,11 +19,11 @@ class Trace:
             self.x = constants.FOUR_K_WIDTH + self.x
             if self.x > constants.FOUR_K_WIDTH - w:
                 self.x = constants.FOUR_K_WIDTH - w
-        if self.x + w > constants.FOUR_K_WIDTH:
+        if self.x + w >= constants.FOUR_K_WIDTH:
             self.x = constants.FOUR_K_WIDTH - w
         if self.y < 0:
             self.y = 0
-        if self.y + h > constants.FOUR_K_HEIGHT:
+        if self.y + h >= constants.FOUR_K_HEIGHT:
             self.y = constants.FOUR_K_HEIGHT - h
 
         self.width = w

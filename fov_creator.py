@@ -27,7 +27,7 @@ def crop(video_path, trace_list, width, height, output_path):
             crop_img = image[trace.y:trace.y + height, trace.x:trace.x + width]
             output.write(crop_img)
     output.release()
-    command = "/home/aras/bin/ffmpeg -i " + output_path + " -c:a copy -c:v libx264 -crf 18 -preset veryfast " + output_path + ".mp4"
+    command = "ffmpeg -i " + output_path + " -c:a copy -c:v libx264 -crf 18 -preset veryfast " + output_path + ".mp4"
     print(command)
     os.system(command)
     os.system("mv " + output_path + ".mp4 " + output_path)
@@ -39,7 +39,7 @@ def re_encode_dir(dest_path):
         for filename in os.listdir(subdir):
             filename = os.path.join(subdir, filename)
             if filename.endswith(".mp4"):
-                command = "/home/aras/bin/ffmpeg -i " + filename + " -c:a copy -c:v libx264 -crf 18 -preset veryfast -y " + filename
+                command = "ffmpeg -i " + filename + " -c:a copy -c:v libx264 -crf 18 -preset veryfast -y " + filename
                 print(command)
                 os.system(command)
 
@@ -89,9 +89,14 @@ if __name__ == '__main__':
                     os.makedirs(output_dir)
                 output_path = os.path.join(output_dir, str(j) + '.mp4')
                 trace_list = []
-                for i in range(local_start, local_start + constants.SEGMENT_NUM):
+                if end < local_start + constants.SEGMENT_NUM:
+                    local_end = end
+                else:
+                    local_end = local_start + constants.SEGMENT_NUM
+                for i in range(local_start, local_end):
+                    if segment_index == 155 and j == 13:
+                        print('fff')
                     trace_list.append(frame_list[i][j])
                 print('process index', segment_index, 'path_id', j)
-                crop(fov_filename, trace_list, fov_width, fov_height, output_path)
+                # crop(fov_filename, trace_list, fov_width, fov_height, output_path)
             segment_index = segment_index + 1
-
